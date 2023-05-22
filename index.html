@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Сторінка з формою</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+  <h1>Сторінка з формою</h1>
+
+  <form id="myForm">
+    <label for="name">Назва:</label>
+    <input type="text" id="name" name="name"><br><br>
+
+    <label for="price">Ціна:</label>
+    <input type="number" id="price" name="price"><br><br>
+
+    <input type="submit" value="Додати">
+  </form>
+
+  <h2>Масив об'єктів:</h2>
+  <ul id="dataList"></ul>
+
+  <script>
+    // Функція для завантаження масиву об'єктів з сервера
+    function loadData() {
+      $.get('/api/data', function(data) {
+        $('#dataList').empty();
+        $.each(data, function(index, item) {
+          $('#dataList').append('<li>' + item.name + ' - ' + item.price + '</li>');
+        });
+      });
+    }
+
+    // Обробник події натискання кнопки "Додати"
+    $('#myForm').submit(function(event) {
+      event.preventDefault();
+
+      var formData = {
+        name: $('#name').val(),
+        price: $('#price').val()
+      };
+
+      $.post('/api/data', formData, function() {
+        loadData();
+        $('#myForm')[0].reset();
+      });
+    });
+
+    // Завантаження масиву при завантаженні сторінки
+    $(document).ready(function() {
+      loadData();
+    });
+  </script>
+</body>
+</html>
